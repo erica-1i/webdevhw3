@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+const base = import.meta.env.BASE_URL;
 
 export default function Home(){
   return (
@@ -17,11 +18,11 @@ export default function Home(){
       <section className="container my-5">
         <h2 className="mb-3">Gallery</h2>
         <div className="row g-3 gallery">
-          <div className="col-12 col-md-6"><img src="/drink1.jpg" alt="Drink 1" /></div>
-          <div className="col-12 col-md-6"><img src="/drink2.jpg" alt="Drink 2" /></div>
-          <div className="col-12 col-md-4"><img src="/drink3.jpg" alt="Drink 3" /></div>
-          <div className="col-12 col-md-4"><img src="/drink4.jpg" alt="Drink 4" /></div>
-          <div className="col-12 col-md-4"><img src="/drink5.jpg" alt="Drink 5" /></div>
+          <div className="col-12 col-md-6"><img src={`${base}drink1.jpg`} alt="Drink 1" /></div>
+          <div className="col-12 col-md-6"><img src={`${base}drink2.jpg`}" alt="Drink 2" /></div>
+          <div className="col-12 col-md-4"><img src={`${base}drink3.jpg`} alt="Drink 3" /></div>
+          <div className="col-12 col-md-4"><img src={`${base}drink4.jpg`} alt="Drink 4" /></div>
+          <div className="col-12 col-md-4"><img src={`${base}drink5.jpg`} alt="Drink 5" /></div>
         </div>
       </section>
     </>
