@@ -5,6 +5,7 @@ import Home from "./pages/Home.jsx";
 import Menu from "./pages/Menu.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
+const base = import.meta.env.BASE_URL;
 
 function Navbar(){
   const { open, totalQty } = useCart();
@@ -13,7 +14,7 @@ function Navbar(){
     <nav className="navbar navbar-expand-lg bg-white sticky-top">
       <div className="container py-2 border-bottom">
         <NavLink className="navbar-brand d-flex align-items-center gap-2" to="/">
-          <img src="/logo.png" alt="logo" width="36" height="36" />
+          <img src={`${base}logo.png`} alt="logo" width="36" height="36" />
           <span className="fw-bold">Starbucks</span>
         </NavLink>
 
