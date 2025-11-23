@@ -1,12 +1,13 @@
 import { useCart } from "../cart/CartContext.jsx";
+const base = import.meta.env.BASE_URL;
 
 const ITEMS = [
-  { name:"Caffè Latte", price:4.25, img:"/drink2.jpg", desc:"Rich espresso with steamed milk." },
-  { name:"Caramel Macchiato", price:5.25, img:"/drink3.jpg", desc:"Vanilla, espresso, milk, caramel drizzle." },
-  { name:"Cold Brew", price:4.75, img:"/drink4.jpg", desc:"Slow-steeped, super smooth." },
-  { name:"Matcha Latte", price:5.00, img:"/drink5.jpg", desc:"Stone-ground matcha with milk." },
-  { name:"Butter Croissant", price:3.25, img:"/drink6.jpg", desc:"Flaky, buttery goodness." },
-  { name:"Blueberry Muffin", price:3.75, img:"/drink1.jpg", desc:"Studded with juicy berries." }
+  { name: "Caffè Latte", price: 4.25, img: `${base}drink2.jpg`, desc: "Rich espresso with steamed milk." },
+  { name: "Caramel Macchiato", price: 5.25, img: `${base}drink3.jpg`, desc: "Vanilla, espresso, milk, caramel drizzle." },
+  { name: "Cold Brew", price: 4.75, img: `${base}drink4.jpg`, desc: "Slow-steeped, super smooth." },
+  { name: "Matcha Latte", price: 5.00, img: `${base}drink5.jpg`, desc: "Stone-ground matcha with milk." },
+  { name: "Butter Croissant", price: 3.25, img: `${base}drink6.jpg`, desc: "Flaky, buttery goodness." },
+  { name: "Blueberry Muffin", price: 3.75, img: `${base}drink1.jpg`, desc: "Studded with juicy berries." }
 ];
 
 export default function Menu(){
