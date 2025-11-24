@@ -7,7 +7,7 @@ export default function Home(){
       <section className="hero">
         <div className="container">
           <h1 className="fw-bold">Handcrafted Drinks, Cozy Vibes</h1>
-          <p>React + Bootstrap version of my Starbucks-themed class project.</p>
+          <p>React + Bootstrap version of my Starbucks website.</p>
           <div className="d-flex justify-content-center gap-2 flex-wrap mt-3">
             <Link to="/menu" className="btn btn-green">Explore the Menu</Link>
             <Link to="/about" className="btn btn-outline-light">Our Story</Link>
