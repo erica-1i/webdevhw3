@@ -19,7 +19,7 @@ export default function Home(){
         <h2 className="mb-3">Gallery</h2>
         <div className="row g-3 gallery">
           <div className="col-12 col-md-6"><img src={`${base}drink1.jpg`} alt="Drink 1" /></div>
-          <div className="col-12 col-md-6"><img src={`${base}drink2.jpg`}" alt="Drink 2" /></div>
+          <div className="col-12 col-md-6"><img src={`${base}drink2.jpg`} alt="Drink 2" /></div>
           <div className="col-12 col-md-4"><img src={`${base}drink3.jpg`} alt="Drink 3" /></div>
           <div className="col-12 col-md-4"><img src={`${base}drink4.jpg`} alt="Drink 4" /></div>
           <div className="col-12 col-md-4"><img src={`${base}drink5.jpg`} alt="Drink 5" /></div>
