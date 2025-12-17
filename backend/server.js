@@ -6,7 +6,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: ["http://localhost:5173", "http://localhost:5174", "https://erica-1i.github.io"],
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
@@ -17,6 +20,9 @@ import orderRoutes from "./src/routes/order.routes.js";
 app.use("/api/menu", menuRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+app.get("/", (req, res) => {
+  res.send("Backend is running. Try /api/health");
+});
 
 app.get("/api/health", (req, res) => res.json({ ok: true }));
 
