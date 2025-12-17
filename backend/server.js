@@ -21,7 +21,7 @@ app.use("/api/menu", menuRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.get("/", (req, res) => {
-  res.send("Backend is running. Try /api/health");
+  res.send("Backend is running. Try /api/menu");
 });
 
 app.get("/api/health", (req, res) => res.json({ ok: true }));
