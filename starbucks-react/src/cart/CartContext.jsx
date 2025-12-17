@@ -1,75 +1,85 @@
-import { createContext, useContext, useReducer, useState, useEffect, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { API_BASE } from "../api.js";
 
 const CartCtx = createContext(null);
 
-function reducer(state, action){
-  switch(action.type){
-    case "LOAD":
-      return action.payload || [];
-    case "ADD": {
-      const i = state.findIndex(it => it.name === action.item.name);
-      if (i >= 0){
-        const next = [...state];
-        next[i] = {...next[i], qty: next[i].qty + 1};
-        return next;
-      }
-      return [...state, {...action.item, qty:1}];
-    }
-    case "INC": {
-      const next = [...state];
-      next[action.index] = {...next[action.index], qty: next[action.index].qty + 1};
-      return next;
-    }
-    case "DEC": {
-      const next = [...state];
-      next[action.index] = {...next[action.index], qty: next[action.index].qty - 1};
-      return next.filter(it => it.qty > 0);
-    }
-    case "REMOVE": {
-      const next = [...state];
-      next.splice(action.index,1);
-      return next;
-    }
-    case "CLEAR":
-      return [];
-    default:
-      return state;
-  }
-}
-
-export function CartProvider({children}){
-  const [cart, dispatch] = useReducer(reducer, []);
+export function CartProvider({ children }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [loadingCart, setLoadingCart] = useState(true);
 
-  // load from localStorage
-  useEffect(()=>{
-    const raw = localStorage.getItem("react-cart");
-    dispatch({type:"LOAD", payload: raw ? JSON.parse(raw) : []});
-  },[]);
-  // save to localStorage
-  useEffect(()=>{
-    localStorage.setItem("react-cart", JSON.stringify(cart));
-  },[cart]);
+  async function fetchCart() {
+    try {
+      setLoadingCart(true);
+      const res = await fetch(`${API_BASE}/cart`);
+      const data = await res.json();
+      setCartItems(data.items || []);
+    } finally {
+      setLoadingCart(false);
+    }
+  }
 
-  const value = useMemo(()=>({
-    cart,
-    add:(item)=>dispatch({type:"ADD", item}),
-    inc:(index)=>dispatch({type:"INC", index}),
-    dec:(index)=>dispatch({type:"DEC", index}),
-    remove:(index)=>dispatch({type:"REMOVE", index}),
-    clear:()=>dispatch({type:"CLEAR"}),
-    totalQty:()=>cart.reduce((s,it)=>s+it.qty,0),
-    totalPrice:()=>cart.reduce((s,it)=>s+it.qty*it.price,0),
-    drawerOpen,
-    open:()=>setDrawerOpen(true),
-    close:()=>setDrawerOpen(false)
-  }),[cart, drawerOpen]);
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  async function post(path, body = undefined) {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!res.ok) {
+      let msg = "Request failed";
+      try {
+        const err = await res.json();
+        msg = err?.error || msg;
+      } catch {}
+      throw new Error(msg);
+    }
+    const data = await res.json();
+    setCartItems(data.items || []);
+    return data;
+  }
+
+  const value = useMemo(() => {
+    const totalQty = () => cartItems.reduce((s, it) => s + it.qty, 0);
+    const totalPrice = () => cartItems.reduce((s, it) => s + it.qty * it.price, 0);
+
+    return {
+      // state
+      cart: cartItems,
+      loadingCart,
+
+      // drawer controls
+      drawerOpen,
+      open: () => setDrawerOpen(true),
+      close: () => setDrawerOpen(false),
+
+      // helpers
+      totalQty,
+      totalPrice,
+
+      // API-backed actions
+      refresh: fetchCart,
+      addById: (menuItemId) => post("/cart/add", { menuItemId }),
+      incById: (menuItemId) => post("/cart/inc", { menuItemId }),
+      decById: (menuItemId) => post("/cart/dec", { menuItemId }),
+      removeById: (menuItemId) => post("/cart/remove", { menuItemId }),
+      clear: () => post("/cart/clear"),
+      placeOrder: async () => {
+        const order = await post("/orders/place");
+        // backend clears cart automatically; our post() already updated cartItems
+        return order;
+      },
+    };
+  }, [cartItems, drawerOpen, loadingCart]);
 
   return <CartCtx.Provider value={value}>{children}</CartCtx.Provider>;
 }
 
-export function useCart(){
+export function useCart() {
   const ctx = useContext(CartCtx);
-  if(!ctx) throw new Error("useCart must be used inside CartProvider");
+  if (!ctx) throw new Error("useCart must be used inside CartProvider");
   return ctx;
 }

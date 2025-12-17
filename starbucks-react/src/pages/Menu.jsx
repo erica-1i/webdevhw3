@@ -1,37 +1,82 @@
+import { useEffect, useState } from "react";
 import { useCart } from "../cart/CartContext.jsx";
-const base = import.meta.env.BASE_URL;
+import { API_BASE } from "../api.js";
 
-const ITEMS = [
-  { name: "Caffè Latte", price: 4.25, img: `${base}drink2.jpg`, desc: "Rich espresso with steamed milk." },
-  { name: "Caramel Macchiato", price: 5.25, img: `${base}drink3.jpg`, desc: "Vanilla, espresso, milk, caramel drizzle." },
-  { name: "Cold Brew", price: 4.75, img: `${base}drink4.jpg`, desc: "Slow-steeped, super smooth." },
-  { name: "Matcha Latte", price: 5.00, img: `${base}drink5.jpg`, desc: "Stone-ground matcha with milk." },
-  { name: "Butter Croissant", price: 3.25, img: `${base}drink6.jpg`, desc: "Flaky, buttery goodness." },
-  { name: "Blueberry Muffin", price: 3.75, img: `${base}drink1.jpg`, desc: "Studded with juicy berries." }
-];
 
-export default function Menu(){
-  const { add, open } = useCart();
 
-  const handleAdd = (item)=>{
-    add({ name:item.name, price:item.price });
-    open();
-  };
+export default function Menu() {
+  const { open, addById } = useCart();
+
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    async function loadMenu() {
+      try {
+        setErr("");
+        setLoading(true);
+
+        const res = await fetch(`${API_BASE}/menu`);
+        if (!res.ok) throw new Error("Failed to load menu");
+        const data = await res.json();
+
+        setItems(data);
+      } catch (e) {
+        setErr(e.message || "Something went wrong loading the menu");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadMenu();
+  }, []);
+
+  async function handleAdd(menuItemId) {
+    try {
+      setErr("");
+      await addById(menuItemId); // updates DB + updates cart state
+      open(); // opens cart drawer
+    } catch (e) {
+      setErr(e.message || "Failed to add item to cart");
+    }
+  }
+
+  if (loading) {
+    return <div className="container my-4">Loading menu…</div>;
+  }
 
   return (
     <section className="container my-4">
       <h2 className="mb-3">Menu</h2>
+
+      {err && <div className="alert alert-danger">{err}</div>}
+
       <div className="row g-3">
-        {ITEMS.map(item=>(
-          <div key={item.name} className="col-12 col-sm-6 col-lg-4">
+        {items.map((it) => (
+          <div key={it._id} className="col-12 col-sm-6 col-lg-4">
             <div className="card h-100">
-              <img src={item.img} alt={item.name} className="card-img-top menu-img" />
+              {}
+<img src={`${import.meta.env.BASE_URL}${it.imageKey}`} alt={it.name} className="card-img-top menu-img" />
+
+
               <div className="card-body d-flex flex-column">
-                <h5 className="card-title">{item.name}</h5>
-                <p className="card-text text-muted">{item.desc}</p>
+                <h5 className="card-title">{it.name}</h5>
+
+                <p className="card-text text-muted">
+                  {it.description || " "}
+                </p>
+
                 <div className="d-flex justify-content-between align-items-center mt-auto">
-                  <strong>${item.price.toFixed(2)}</strong>
-                  <button className="btn btn-green" onClick={()=>handleAdd(item)}>Add to Cart</button>
+                  <strong>${Number(it.price).toFixed(2)}</strong>
+
+                  <button
+                    className="btn btn-green"
+                    onClick={() => handleAdd(it._id)}
+                  >
+                    
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             </div>
