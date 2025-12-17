@@ -1,0 +1,24 @@
+# ---- Secrets ----
+.env
+.env.* 
+*.env
+
+# ---- Node / logs ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---- Builds ----
+dist/
+build/
+
+# ---- OS ----
+.DS_Store
+
+# ---- Vite ----
+.vite/
+
+# ---- Optional: local editor stuff ----
+.vscode/
